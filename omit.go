@@ -8,6 +8,11 @@ import (
 var _ json.Marshaler = (*Omit[int])(nil)
 var _ json.Unmarshaler = (*Omit[int])(nil)
 
+// Ptr returns a pointer to the given value.
+func Ptr[T any](v T) *T {
+	return &v
+}
+
 // New creates a new Omit with the given value set.
 func New[T any](v T) Omit[T] {
 	return Omit[T]{
