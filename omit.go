@@ -1,7 +1,9 @@
 package omit
 
 import (
+	"encoding"
 	"encoding/json"
+	"errors"
 	"fmt"
 )
 
@@ -78,6 +80,42 @@ func (o *Omit[T]) UnmarshalJSON(data []byte) error {
 	o.Value = v
 	o.OK = true
 	return nil
+}
+
+// MarshalText marshals the value if it is set, otherwise it returns nil.
+func (o Omit[T]) MarshalText() ([]byte, error) {
+	if m, ok := any(o.Value).(encoding.TextMarshaler); ok {
+		return m.MarshalText()
+	}
+
+	return nil, errors.New("failed to marshal text: value is not a TextMarshaler")
+}
+
+// UnmarshalText unmarshals the value if it is set, otherwise it returns nil.
+func (o *Omit[T]) UnmarshalText(data []byte) error {
+	if m, ok := any(o.Value).(encoding.TextUnmarshaler); ok {
+		return m.UnmarshalText(data)
+	}
+
+	return errors.New("failed to unmarshal text: value is not a TextUnmarshaler")
+}
+
+// MarshalBinary marshals the value if it is set, otherwise it returns nil.
+func (o Omit[T]) MarshalBinary() ([]byte, error) {
+	if m, ok := any(o.Value).(encoding.BinaryMarshaler); ok {
+		return m.MarshalBinary()
+	}
+
+	return nil, errors.New("marshal binary: not a BinaryMarshaler")
+}
+
+// UnmarshalBinary unmarshals the value if it is set, otherwise it returns nil.
+func (o *Omit[T]) UnmarshalBinary(data []byte) error {
+	if m, ok := any(o.Value).(encoding.BinaryUnmarshaler); ok {
+		return m.UnmarshalBinary(data)
+	}
+
+	return errors.New("unmarshal binary: not a BinaryUnmarshaler")
 }
 
 // Or returns the value if it is set, otherwise it returns the default value.
