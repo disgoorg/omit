@@ -3,8 +3,6 @@ package omit
 import (
 	"encoding/json"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 type user struct {
@@ -50,7 +48,9 @@ func TestOptional_MarshalJSON(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			assert.Equal(t, d.expected, string(b))
+			if d.expected != string(b) {
+				t.Errorf("expected: %s, got: %s", d.expected, string(b))
+			}
 		})
 	}
 }
@@ -93,7 +93,12 @@ func TestOptional_UnmarshalJSON(t *testing.T) {
 			if err := json.Unmarshal([]byte(d.json), &u); err != nil {
 				t.Fatal(err)
 			}
-			assert.Equal(t, d.expected, u)
+			if d.expected.ID != u.ID {
+				t.Errorf("expected: %s, got: %s", d.expected.ID, u.ID)
+			}
+			if d.expected.Name != u.Name {
+				t.Errorf("expected: %s, got: %s", d.expected.Name, u.Name)
+			}
 		})
 	}
 }

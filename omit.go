@@ -11,6 +11,7 @@ var _ json.Marshaler = (*Omit[int])(nil)
 var _ json.Unmarshaler = (*Omit[int])(nil)
 
 // Ptr returns a pointer to the given value.
+// Deprecated: use new(T) as of go 1.26.
 func Ptr[T any](v T) *T {
 	return &v
 }
@@ -47,6 +48,7 @@ func NewZero[T any]() Omit[T] {
 
 // Omit is a type that can be used to represent a value which may or may not be set.
 // This is useful for omitting the value in JSON. The zero value of Omit is not set.
+// Use New, NewPtr, NewNilPtr, or NewZero to create a new Omit with the desired value.
 type Omit[T any] struct {
 	Value T
 	OK    bool
